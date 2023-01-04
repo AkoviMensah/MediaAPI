@@ -1,4 +1,5 @@
 using API.Data;
+using API.Data.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,6 +12,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<MediaContext>(options => options.UseInMemoryDatabase("SongsDb"));
+builder.Services.AddScoped<IRepository, MediaRepository>();
 
 var app = builder.Build();
 

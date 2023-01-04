@@ -11,33 +11,39 @@ namespace API.Controllers
     [ApiController]
     public class MediaController : ControllerBase
     {
-        private MediaContext _context { get; set; }
-        public MediaController(MediaContext context)
+        private IRepository _repo { get; set; }
+        public MediaController(IRepository repo)
         {
-            _context = context;
+            _repo = repo;
         }
 
 
         [HttpGet("songs")]
         public async Task<IActionResult> GetSongs()
         {
-            return Ok(await _context.Songs.ToListAsync());
+            return Ok(_repo.GetAll());
         }
 
         [HttpGet("{id}")]
         public async Task<Song> GetSong(int id)
         {
-            return await _context.Songs.FindAsync(id);
+            return await _repo.Get(id);
         }
 
 
         [HttpPost("add")]
         public async Task<IActionResult> AddSong(AddSong item)
         {
-            Song song = new Song(item.Id, item.Name, item.Uri);
-            await _context.Songs.AddAsync(song);
-            await _context.SaveChangesAsync();
-            return Ok(song);
+            var added = await _repo.Add(item);
+            if (added) return Ok(item);
+            return BadRequest("Alreaday in DB");
+        }
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateSong(UpdateSong item)
+        {
+            var updated = await _repo.Update(item);
+            if (updated != null) return Ok(updated);
+            return BadRequest("Not found in DB");
         }
     }
 }
