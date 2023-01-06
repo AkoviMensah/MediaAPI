@@ -21,7 +21,7 @@ namespace API.Controllers
         [HttpGet("songs")]
         public async Task<IActionResult> GetSongs()
         {
-            return Ok(_repo.GetAll());
+            return Ok(await _repo.GetAll());
         }
 
         [HttpGet("{id}")]
